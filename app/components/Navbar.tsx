@@ -7,7 +7,7 @@ import logo from "../../public/logo.png";
 
 const Navbar = () => {
   return (
-    <div className="bg-[#F3F5F9] flex items-center w-screen justify-between py-3 md:text-xs">
+    <div className=" bg-[#F3F5F9] flex items-center w-screen justify-between py-3 md:text-xs">
       <div className="flex items-center px-6 gap-6">
         <div className="font-semibold 2xl:text-2xl text-xl">
           {/* aryvo */}

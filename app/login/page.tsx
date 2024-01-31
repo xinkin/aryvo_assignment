@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="bg-white p-8 rounded shadow-md w-2/5">
+      <div className="bg-white p-8 rounded shadow-md w-2/5 2xl:w-2/6">
         <div className="text-2xl font-bold mb-4 text-center">Login</div>
         <div className="flex items-center w-full mb-4 gap-5">
           <div className="text-2xl">
