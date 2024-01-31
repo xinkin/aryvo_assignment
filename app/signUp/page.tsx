@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config.js";
 import { useRouter } from "next/navigation";
@@ -8,19 +8,34 @@ import { RiLockPasswordFill } from "react-icons/ri";
 
 const SignUpPage: React.FC = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
+  const [isSignUpSuccessful, setIsSignUpSuccessful] = useState<boolean>(false);
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (): Promise<void> => {
     try {
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        alert("Please enter a valid email address");
+        return;
+      }
+
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters long");
+        return;
+      }
+
       const res = await createUserWithEmailAndPassword(email, password);
       console.log({ res });
-      alert("Sign Up Successfull");
+
+      setIsSignUpSuccessful(true);
       setEmail("");
       setPassword("");
-      router.push("/login");
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     } catch (e) {
       console.log(e);
     }
@@ -40,7 +55,9 @@ const SignUpPage: React.FC = () => {
             placeholder="Email"
             className="mt-1 p-2 border rounded w-full"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
             required
           />
         </div>
@@ -55,16 +72,26 @@ const SignUpPage: React.FC = () => {
             placeholder="Password"
             className="mt-1 p-2 border rounded w-full"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
             required
           />
         </div>
+
         <button
           className="w-full bg-[#2A56FE] text-white p-2 rounded-full hover:bg-indigo-600 focus:outline-none"
           onClick={handleSignUp}
         >
           Sign Up
         </button>
+
+        {isSignUpSuccessful && (
+          <div className="text-green-600 mt-2 text-center">
+            Sign Up Successful! Redirecting to login page...
+          </div>
+        )}
+
         <div className="text-xs w-full flex justify-end mt-2 mr-2 gap-1">
           Already a User?{" "}
           <button
