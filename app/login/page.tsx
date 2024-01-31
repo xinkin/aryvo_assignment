@@ -5,15 +5,18 @@ import { auth } from "@/app/firebase/config.js";
 import { useRouter } from "next/navigation";
 import { IoPerson } from "react-icons/io5";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { Oval } from "react-loader-spinner";
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleLogin = async (): Promise<void> => {
     try {
+      setIsLoading(true);
       const res = await signInWithEmailAndPassword(email, password);
       if (res && res.user) {
         console.log("Login successful:", res.user);
@@ -22,9 +25,11 @@ const LoginPage: React.FC = () => {
         router.push("/landing");
       } else {
         alert("Login failed: User does not exist or incorrect credentials");
+        setIsLoading(false);
       }
     } catch (e) {
       console.error("Error during login:", e);
+      setIsLoading(false);
     }
   };
 
@@ -71,10 +76,15 @@ const LoginPage: React.FC = () => {
           />
         </div>
         <button
-          className="w-full bg-white text-[#2A56FE] p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+          className="w-full bg-white text-[#2A56FE] p-2 rounded-full hover:bg-gray-200 focus:outline-none flex justify-center items-center"
           onClick={handleLogin}
+          disabled={isLoading}
         >
-          Log In
+          {isLoading ? (
+            <Oval color="#FFFFFF" height="20" width="20" />
+          ) : (
+            "Log In"
+          )}
         </button>
       </div>
     </div>

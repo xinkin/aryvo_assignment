@@ -5,6 +5,7 @@ import { auth } from "@/app/firebase/config.js";
 import { useRouter } from "next/navigation";
 import { IoPerson } from "react-icons/io5";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { Oval } from "react-loader-spinner";
 
 const SignUpPage: React.FC = () => {
   const router = useRouter();
@@ -13,21 +14,31 @@ const SignUpPage: React.FC = () => {
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
   const [isSignUpSuccessful, setIsSignUpSuccessful] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSignUp = async (): Promise<void> => {
     try {
+      setIsLoading(true);
+
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         alert("Please enter a valid email address");
+        setIsLoading(false);
         return;
       }
 
       if (password.length < 8) {
         alert("Password must be at least 8 characters long");
+        setIsLoading(false);
         return;
       }
 
       const res = await createUserWithEmailAndPassword(email, password);
-      console.log({ res });
+      if (!res) {
+        alert("User Already Exists, Please Login");
+        setIsLoading(false);
+        return;
+      }
+      console.log(res);
 
       setIsSignUpSuccessful(true);
       setEmail("");
@@ -38,6 +49,8 @@ const SignUpPage: React.FC = () => {
       }, 2000);
     } catch (e) {
       console.log(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,10 +93,15 @@ const SignUpPage: React.FC = () => {
         </div>
 
         <button
-          className="w-full bg-[#2A56FE] text-white p-2 rounded-full hover:bg-indigo-600 focus:outline-none"
+          className="w-full bg-[#2A56FE] text-white p-2 rounded-full hover:bg-indigo-600 focus:outline-none flex justify-center items-center"
           onClick={handleSignUp}
+          disabled={isLoading}
         >
-          Sign Up
+          {isLoading ? (
+            <Oval color="#FFFFFF" height={20} width={20} />
+          ) : (
+            "Sign Up"
+          )}
         </button>
 
         {isSignUpSuccessful && (
